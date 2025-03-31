@@ -13,6 +13,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@nuxt/ui": "^3.0.2",
     "nuxt": "^3.16.1",
     "vue": "latest"
   },
