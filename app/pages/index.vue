@@ -1,5 +1,7 @@
 <template>
-  <p>Hello</p>
+  <UContainer>
+    <p>Hello</p>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
