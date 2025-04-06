@@ -13,9 +13,11 @@
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <UForm
+        :schema="schema"
         :state="state"
         :disabled="isSignedUp"
         class="space-y-6"
+        @submit="onSubmit"
       >
         <UFormField
           label="昵称"
@@ -72,9 +74,9 @@
           color="neutral"
           type="submit"
           size="lg"
-          :loading="isSubmitting"
-          :disabled="isLoggedIn"
-          class="block w-full font-bold"
+          block
+          loading-auto
+          class="w-full font-bold cursor-pointer"
         >
           注册
         </UButton>
@@ -100,6 +102,9 @@
 </template>
 
 <script setup lang="ts">
+import * as v from 'valibot'
+import type { FormSubmitEvent } from '@nuxt/ui'
+
 definePageMeta({
   layout: 'auth-layout',
 })
@@ -110,13 +115,65 @@ useHead({
   },
 })
 
-const isSubmitting = ref(false)
-const isSignedUp = ref(false)
+const schema = v.object({
+  email: v.pipe(
+    v.string('电子邮件必须是字符串'),
+    v.trim(),
+    v.nonEmpty('请输入电子邮箱'),
+    v.email('请输入有效的电子邮箱'),
+  ),
+  password: v.pipe(
+    v.string('密码必须是字符串'),
+    v.trim(),
+    v.nonEmpty('请输入你的密码'),
+    v.minLength(8, '密码最少 8 个字符'),
+    v.maxLength(32, '密码最多 32 个字符'),
+  ),
+  name: v.pipe(
+    v.string('昵称必须是字符串'),
+    v.trim(),
+    v.nonEmpty('请输入你的昵称'),
+    v.minLength(1, '昵称不能为空'),
+  ),
+})
+
+type Schema = v.InferOutput<typeof schema>
+
+const toast = useToast()
+const router = useRouter()
+const isSignedUp = ref(false) // 注册成功后禁用按钮
 const state = reactive({
   email: '',
   password: '',
   name: '',
 })
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  // 用户注册 API 调用
+  await authClient.signUp.email({
+    email: event.data.email,
+    password: event.data.password,
+    name: event.data.name,
+  }, {
+    onSuccess: () => {
+      isSignedUp.value = true
+      toast.add({
+        icon: 'i-lucide-shield-check',
+        title: '注册成功',
+        color: 'success',
+      })
+      router.push('/')
+    },
+    onError: (ctx) => {
+      toast.add({
+        icon: 'i-lucide-shield-x',
+        title: '注册失败',
+        description: ctx.error.message,
+        color: 'error',
+      })
+    },
+  })
+}
 </script>
 
 <style scoped>

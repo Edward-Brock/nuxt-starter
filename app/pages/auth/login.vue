@@ -13,9 +13,11 @@
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <UForm
+        :schema="schema"
         :state="state"
         :disabled="isLoggedIn"
         class="space-y-6"
+        @submit="onSubmit"
       >
         <UFormField
           label="电子邮箱"
@@ -62,22 +64,22 @@
           color="neutral"
           type="submit"
           size="lg"
-          :loading="isSubmitting"
-          class="block w-full font-bold"
+          block
+          loading-auto
+          class="w-full font-bold cursor-pointer"
         >
           登录
         </UButton>
       </UForm>
     </div>
 
-    <footer class="mt-10">
+    <footer class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <div class="space-y-4 text-center text-sm/6 text-gray-500">
         还没有账号？
         <UButton
           color="neutral"
           variant="link"
           trailing-icon="i-lucide-arrow-right"
-          size="lg"
           class="font-semibold"
           to="/auth/signup"
         >
@@ -89,6 +91,9 @@
 </template>
 
 <script setup lang="ts">
+import * as v from 'valibot'
+import type { FormSubmitEvent } from '@nuxt/ui'
+
 definePageMeta({
   layout: 'auth-layout',
 })
@@ -99,13 +104,61 @@ useHead({
   },
 })
 
-const isSubmitting = ref(false)
-const isLoggedIn = ref(false)
+const schema = v.object({
+  email: v.pipe(
+    v.string('电子邮件必须是字符串'),
+    v.trim(),
+    v.nonEmpty('请输入电子邮箱'),
+    v.email('请输入有效的电子邮箱'),
+  ),
+  password: v.pipe(
+    v.string('密码必须是字符串'),
+    v.trim(),
+    v.nonEmpty('请输入你的密码'),
+    v.minLength(8, '必须至少包含 8 个字符'),
+    v.maxLength(32, '最多不超过 32 个字符'),
+  ),
+  rememberMe: v.pipe(
+    v.boolean(),
+  ),
+})
+
+type Schema = v.InferOutput<typeof schema>
+
+const toast = useToast()
+const router = useRouter()
+const isLoggedIn = ref(false) // 登录成功后禁用按钮
 const state = reactive({
   email: '',
   password: '',
   rememberMe: true,
 })
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  await authClient.signIn.email({
+    email: event.data.email,
+    password: event.data.password,
+    rememberMe: event.data.rememberMe,
+  }, {
+    onSuccess: () => {
+      isLoggedIn.value = true
+      toast.add({
+        icon: 'i-lucide-shield-check',
+        title: '登录成功',
+        color: 'success',
+      })
+      router.push('/')
+    },
+    onError: (ctx) => {
+      toast.add({
+        icon: 'i-lucide-shield-x',
+        title: '登录失败',
+        description: ctx.error.message,
+        color: 'error',
+      })
+    },
+  })
+}
 </script>
 
 <style scoped>
