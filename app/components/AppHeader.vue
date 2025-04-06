@@ -19,6 +19,7 @@
                 color="neutral"
                 variant="ghost"
                 class="cursor-pointer"
+                to="/auth/login"
               >
                 Log in
               </UButton>
@@ -27,6 +28,7 @@
                 variant="subtle"
                 trailing-icon="i-lucide-arrow-right"
                 class="cursor-pointer"
+                to="/auth/signup"
               >
                 Sign up
               </UButton>
