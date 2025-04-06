@@ -19,6 +19,7 @@
     "@prisma/client": "^6.5.0",
     "better-auth": "^1.2.5",
     "nuxt": "^3.16.2",
+    "valibot": "^1.0.0",
     "vue": "latest"
   },
   "devDependencies": {
