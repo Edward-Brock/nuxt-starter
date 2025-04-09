@@ -13,26 +13,31 @@
           </div>
           <!-- 导航区域 -->
           <div class="sm:ml-6 sm:flex sm:justify-between">
-            <!-- 登录/注册按钮区域 -->
-            <div class="space-x-2 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:pr-0">
-              <UButton
-                color="neutral"
-                variant="ghost"
-                class="cursor-pointer"
-                to="/auth/login"
-              >
-                Log in
-              </UButton>
-              <UButton
-                color="neutral"
-                variant="subtle"
-                trailing-icon="i-lucide-arrow-right"
-                class="cursor-pointer"
-                to="/auth/signup"
-              >
-                Sign up
-              </UButton>
-            </div>
+            <template v-if="!session.data">
+              <!-- 登录/注册按钮区域 -->
+              <div class="space-x-2 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:pr-0">
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  class="cursor-pointer"
+                  to="/auth/login"
+                >
+                  Log in
+                </UButton>
+                <UButton
+                  color="neutral"
+                  variant="subtle"
+                  trailing-icon="i-lucide-arrow-right"
+                  class="cursor-pointer"
+                  to="/auth/signup"
+                >
+                  Sign up
+                </UButton>
+              </div>
+            </template>
+            <template v-else>
+              <UserDropdown />
+            </template>
           </div>
         </div>
       </div>
@@ -42,6 +47,8 @@
 
 <script setup lang="ts">
 import { Disclosure } from '@headlessui/vue'
+
+const session = authClient.useSession()
 </script>
 
 <style scoped>
