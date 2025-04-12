@@ -36,6 +36,7 @@ const items = ref<DropdownMenuItem[]>([
     {
       label: '个人信息',
       icon: 'i-lucide-user',
+      to: '/setting/profile',
     },
     {
       label: '设置',

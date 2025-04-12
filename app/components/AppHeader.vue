@@ -5,11 +5,13 @@
         <div class="w-full flex items-center justify-center pl-2 sm:items-stretch sm:justify-between sm:pl-0">
           <!-- Logo 区域 -->
           <div class="flex flex-1 shrink-0 items-center sm:flex-none">
-            <img
-              class="h-8 w-auto"
-              src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-              alt="Your Company"
-            >
+            <ULink to="/">
+              <img
+                class="h-8 w-auto"
+                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                alt="Your Company"
+              >
+            </ULink>
           </div>
           <!-- 导航区域 -->
           <div class="sm:ml-6 sm:flex sm:justify-between">
